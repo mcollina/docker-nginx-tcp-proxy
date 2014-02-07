@@ -1,0 +1,26 @@
+
+daemon off;
+
+tcp {
+    upstream cluster {
+        # simple round-robin
+        server MOSCA1:1883;
+        server MOSCA2:1883;
+        server MOSCA3:1883;
+
+        check interval=3000 rise=2 fall=5 timeout=1000;
+        #check interval=3000 rise=2 fall=5 timeout=1000 type=ssl_hello;
+        #check interval=3000 rise=2 fall=5 timeout=1000 type=http;
+    }
+
+    server {
+        listen 1883;
+        proxy_pass cluster;
+    }
+}
+
+worker_processes 2;
+
+events {
+    worker_connections 1024;
+}
