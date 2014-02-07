@@ -9,12 +9,18 @@ tcp {
         server MOSCA3:1883;
 
         check interval=3000 rise=2 fall=5 timeout=1000;
-        #check interval=3000 rise=2 fall=5 timeout=1000 type=ssl_hello;
-        #check interval=3000 rise=2 fall=5 timeout=1000 type=http;
     }
 
     server {
         listen 1883;
+        proxy_pass cluster;
+    }
+
+    server {
+        ssl on;
+        ssl_certificate /opt/nginx/cert.pem;
+        ssl_certificate_key /opt/nginx/key.pem;
+        listen 8883 ssl;
         proxy_pass cluster;
     }
 }

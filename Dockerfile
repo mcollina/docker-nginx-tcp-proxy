@@ -22,6 +22,12 @@ RUN cd /opt/nginx; ./configure --add-module=/opt/nginx_tcp_proxy_module; make
 
 RUN mkdir -p /usr/local/nginx/logs
 
+RUN openssl genrsa -out /opt/nginx/key.pem 1024
+
+RUN openssl req -new -subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=www.example.com" -key /opt/nginx/key.pem -out /opt/nginx/csr.pem
+
+RUN openssl x509 -req -in /opt/nginx/csr.pem -signkey /opt/nginx/key.pem -out /opt/nginx/cert.pem
+
 ADD ./config /opt/nginx/config_tcp
 
 ADD ./start.sh /opt/nginx/start.sh
